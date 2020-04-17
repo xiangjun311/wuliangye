@@ -91,8 +91,8 @@ dingTalkM.authLogin('ding7da0a93f20669022ee0f45d8e4f7c288', '/api/ddadapter/ding
 //************************** */
 
 
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount("#app");
+// new Vue({
+//   router,
+//   store,
+//   render: h => h(App)
+// }).$mount("#app");
