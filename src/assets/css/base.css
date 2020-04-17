@@ -1,0 +1,119 @@
+* {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    box-sizing: border-box;
+}
+html,body,#app {
+    background-color: #F1F2F4;
+
+}
+html,.content,.home{
+    height: 100%;
+}
+body{
+    height: calc(100% - 106px);
+}
+/* tab组件 */
+.van-tabs__line{
+    height: 4px;
+    border-radius: 0;
+    width: 59px !important;
+}
+.van-tabs__wrap{
+    border-bottom: 1pt solid #e5e5e5;
+}
+.van-tab{
+    color: #999999;
+    font-size: 15px;
+}
+.van-tab--active{
+    color: #F13D3D;
+}
+
+.van-tabs__content {
+    height: calc(100% - 44px)
+}
+.van-tab__pane {
+    height: 100%;
+}
+.collapseList .van-cell{
+    background: transparent;
+    padding: 0;
+}
+.van-tab__pane .van-icon-search{
+    display: none;
+}
+
+/* 折叠面板 */
+
+.collapse .van-cell{
+    justify-content: center;
+}
+.collapse .van-cell__title{
+    flex:none;
+}
+.dealersDetail input::-webkit-input-placeholder {
+    /* placeholder颜色  */
+   /* placeholder字体大小  */
+    font-size: 15px;
+    /* placeholder位置  */
+    text-align: right;
+}
+/**/
+/**/
+
+/**/
+.flex_center{
+    display: flex;
+    align-items: center;
+    /* justify-content: space-between; */
+}
+.flex_s_b{
+    display: flex;
+
+}
+.flex_column{
+    display: flex;
+    flex-direction: column;
+}
+.flex_column_center{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.fontSize_13{
+    font-size: 13px;
+}
+.fontSize_15{
+    font-size: 15px;
+}
+.fontSize_18{
+    font-size: 18px;
+}
+.fontWeight{
+    font-weight: 900;
+}
+.color_9{
+    color: #999999;
+}
+.color_3{
+    color: #333333;
+}
+.color_b{
+    color:#BB9677;
+}
+.color_red{
+    color: #F13D3D;
+}
+
+.van-picker__cancel {
+    color:#999999;
+    font-size: 15px;
+}
+.van-picker__confirm{
+    color:#333333;
+    font-size: 15px;
+}
+
