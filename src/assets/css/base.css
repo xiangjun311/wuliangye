@@ -107,6 +107,10 @@ body{
 .color_red{
     color: #F13D3D;
 }
+.link{
+    color: #062ae6;
+    text-decoration: underline;
+}
 
 .van-picker__cancel {
     color:#999999;
@@ -116,4 +120,13 @@ body{
     color:#333333;
     font-size: 15px;
 }
-
+.van-cell:not(:last-child)::after{
+    border:0
+}
+.van-list__error-text, .van-list__finished-text{
+    height: 50px;
+    line-height: 40px;
+}
+.van-list__loading{
+    display: none;
+}

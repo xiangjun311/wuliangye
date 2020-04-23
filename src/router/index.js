@@ -21,6 +21,11 @@ const routes = [
         name: "经销商详情",
         component: (resolve) => require(['../views/dealers/dealersDetail'], resolve)
       },
+      // {
+      //   path: '/outDetail',
+      //   name: "经销商出库详情",
+      //   component: (resolve) => require(['../views/dealers/outDetail'], resolve)
+      // },
     ]
   },
   

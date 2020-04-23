@@ -25,6 +25,24 @@ import {
 	dingTalkM
 } from 'dingtalk-auth'
 
+
+Vue.prototype.$uniqueArray = function(array, key){ //JSON去重
+	var result = [array[0]];
+	for(var i = 1; i < array.length; i++){
+	  var item = array[i];
+	  var repeat = false;
+	  for (var j = 0; j < result.length; j++) {
+		if (item[key] == result[j][key]) {
+		  repeat = true;
+		  break;
+		}
+	  }
+	  if (!repeat) {
+		result.push(item);
+	  }
+	}
+	return result;
+  }
 // 钉钉鉴权需要的jsapi列表
 let jsApiList = [
 	'device.launcher.checkInstalledApps',
@@ -91,8 +109,8 @@ dingTalkM.authLogin('ding7da0a93f20669022ee0f45d8e4f7c288', '/api/ddadapter/ding
 //************************** */
 
 
-// new Vue({
-//   router,
-//   store,
-//   render: h => h(App)
-// }).$mount("#app");
+new Vue({
+  router,
+  store,
+  render: h => h(App)
+}).$mount("#app");

@@ -5,6 +5,7 @@
     <form action="/" class="search_form">
       <van-search v-model="value" placeholder="搜索" @search="onSearch" @cancel="onCancel" />
     </form>
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
     <van-list
       class="list"
       v-model="loading"
@@ -13,8 +14,7 @@
       :error.sync="error"
       error-text="请求失败，点击重新加载"
       @load="onLoad"
-			  offset="50"
-
+      offset="50"
     >
       <van-cell
         v-for="(item,index) in dealersList"
@@ -23,10 +23,12 @@
         @click="goDetail(item)"
       >
         <div>姓名：{{item.name}}</div>
+        <!-- <div>姓名：{{item.userName}}</div> -->
         <div>经销商编码：{{item.distributorId}}</div>
         <div>经销商手机号：{{item.phone}}</div>
       </van-cell>
     </van-list>
+    </van-pull-refresh>
   </div>
 </template>
 <script>
@@ -38,6 +40,7 @@ export default {
       list: [],
       loading: false,
       finished: false,
+      refreshing:false,
       error: false,
       dealersList: [],
       index: 0,
@@ -77,17 +80,6 @@ export default {
           userId: "",
           userName: ""
         },
-        // data: {
-        //   distributerId: "4000007200", //经销商编码
-        //   from: "2017-01-01", //开始时间
-        //   to: "2022-04-01", //结束时间
-        //   channelId: "S", //渠道名称
-        //   productId: "4000000789", //产品ID
-        //   pagination: {
-        //     pageSize: 15, //每页多少条
-        //     currentPage: 0 //当前多少页
-        //   }
-        // }
       }
     };
   },
@@ -100,7 +92,6 @@ export default {
   methods: {
     getList() {
     //   this.params.data.pagination.currentPage++;
-      this.params.data.pageNum++;
       console.log(this.params);
 
       this.$ddapi.showLoading("加载中");
@@ -108,15 +99,25 @@ export default {
       this.$Axios
         .post("/api/ddadapter/openApi/data/", this.params)
         .then(res => {
+          
           // 加载状态结束
           this.$ddapi.hidePreloader();
 
           this.loading = false;
           let result = res.data.data;
           if (result.success) {
+            if (this.refreshing) { //下拉刷新重置
+              this.dealersList = []
+              this.refreshing = false;
+            }
             result.result.list.map(item => {
               this.dealersList.push(item);
             });
+            console.log(result.result.list);
+            
+            // this.dealersList = this.$uniqueArray(this.dealersList,'distributorId') //去重
+            console.log(this.dealersList);
+            
             // 数据全部加载完成
             if (this.dealersList.length >= result.result.total) {
               //等于数据总条数total
@@ -127,20 +128,6 @@ export default {
             this.dealersList = []
           }
 
-          //   if (result.success) {
-          //     result.result.detail.map(item => {
-          //       this.dealersList.push(item);
-          //     });
-          //     if (
-          //       this.dealersList.length >=
-          //       result.result.pagination.totalNumberOfResults
-          //     ) {
-          //       this.finished = true;
-          //     }
-          //     console.log(this.dealersList);
-          //   } else {
-          //     this.$toast(result.errorMsg);
-          //   }
         })
         .catch(e => {
           console.log(e);
@@ -161,6 +148,17 @@ export default {
     },
     onLoad() {
       // 异步更新数据
+      this.params.data.pageNum++;
+      this.getList();
+    },
+    onRefresh() {
+      // 清空列表数据刷新
+      this.params.data.pageNum = 1
+
+      this.finished = false;
+      // 重新加载数据
+      // 将 loading 设置为 true，表示处于加载状态
+      this.loading = true;
       this.getList();
     },
     goDetail(item) {
