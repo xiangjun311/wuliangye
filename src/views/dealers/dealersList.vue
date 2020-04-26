@@ -75,7 +75,7 @@ export default {
           distributorName: "",
           name: "",
           pageNum: 0,
-          pageSize: 15,
+          pageSize: 20,
           phone: "",
           userId: "",
           userName: ""

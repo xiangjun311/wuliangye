@@ -15,12 +15,12 @@
         <div>
           <div class="fontSize_18 color_3">{{storageRecord.customerScan}}</div>
           <div class="fontSize_13 color_9">下游入库合计</div>
-        </div> -->
+        </div>-->
         <!-- <div>
           <div class="fontSize_18 color_3">{{storageRecord.customerScan}}</div>
           <div class="fontSize_13 color_9">盘点库存</div>
           <div class="fontSize_13 color_9">盘点日期：2020-04-20</div>
-        </div> -->
+        </div>-->
         <div>
           <!-- <div class="fontSize_18 color_3 link" @click="outLink">{{storageRecord.storageOut}}</div> -->
           <div class="fontSize_18 color_3">{{storageRecord.storageOut}}</div>
@@ -28,7 +28,10 @@
         </div>
         <div>
           <div class="fontSize_18 color_3">{{storageRecord.inventory}}</div>
-          <div class="fontSize_13 color_9">实时库存量<van-icon name="info" size="10" @click="infoClick"/></div>
+          <div class="fontSize_13 color_9">
+            实时库存量
+            <van-icon name="info" size="10" @click="infoClick" />
+          </div>
         </div>
       </div>
     </div>
@@ -36,7 +39,11 @@
     <van-tabs v-model="active" animated color="#F13D3D" @click="tabsClick">
       <van-tab title="计划执行">
         <div class="panelBtn" style="background: #ffffff;margin:0 0 8px 0;padding:0">
-          <div class="orderButton color_3"  style="border-right:1px solid #E5E5E5" @click="pickerYear">
+          <div
+            class="orderButton color_3"
+            style="border-right:1px solid #E5E5E5"
+            @click="pickerYear"
+          >
             {{currentYear}}
             <van-icon name="arrow-down" />
           </div>
@@ -87,7 +94,7 @@
                 @load="onLoadTerminal('00715FY35')"
                 :immediate-check="false"
                 offset="50"
-                >
+              >
                 <van-cell v-for="(item,index) in OrderFulfillment" :key="index">
                   <Collapse :key="index">
                     <div slot="contentTop">
@@ -128,43 +135,49 @@
             <span style="color:#b2b2b2;font-size:15px;line-height:31px;">暂无报表~</span>
           </div>
           <div class="collapseList" v-else>
-            <Collapse
-              :isunfold="isUnfold"
-              v-for="(item,index) in PlaceList"
-              :key="index"
-              :slotscope="item"
-              @unfold="unfoldDetail"
-            >
-              <div slot="contentTop">
-                <div class="title">
-                  <span class="detailCell">
-                    <span class="fontSize_15 fontWeight color_3">渠道：{{item.channelId}}</span>
-                  </span>
-                  <span class="fontSize_13 color_9">产品：{{item.inbound}}</span>
-                  <span class="fontSize_13 color_9">合规：{{item.inboundViolation}}</span>
-                  <span class="fontSize_13 color_9">地址：{{item.address}}</span>
-                </div>
-              </div>
-              <div
-                class="detail"
-                slot="contentBottom"
-                v-for="(product,idx) in channel[item.channelId]"
-                :key="idx"
+            <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+              <van-list
+                v-model="loading"
+                :finished="finishedPlace"
+                finished-text="没有更多了"
+                :immediate-check="false"
+                offset="50"
               >
-                <div class="flex_column" style="height:85px;padding: 12px 0;">
-                  <span class="fontSize_13 detailCell">
-                    <span class="color_3">物流码：{{product.barcode}}</span>
-                  </span>
-                  <span class="fontSize_13 color_9">{{product.exceptions}}</span>
-                  <span class="fontSize_13 color_9">扫码时间：{{product.scanTime}}</span>
-                </div>
-              </div>
-              <div
-                slot="more"
-                style="background:#F0F1F3;text-algin:center;"
-                @click="moreClick('00715FY38')"
-              >点击更多...</div>
-            </Collapse>
+                <van-cell v-for="(item,index) in PlaceList" :key="index">
+                  <Collapse :isunfold="isUnfold" :slotscope="item" @unfold="unfoldDetail">
+                    <div slot="contentTop">
+                      <div class="title">
+                        <span class="detailCell">
+                          <span class="fontSize_15 fontWeight color_3">渠道：{{item.channelId}}</span>
+                        </span>
+                        <span class="fontSize_13 color_9">产品：{{item.inbound}}</span>
+                        <span class="fontSize_13 color_9">合规：{{item.inboundViolation}}</span>
+                        <span class="fontSize_13 color_9">地址：{{item.address}}</span>
+                      </div>
+                    </div>
+                    <div
+                      class="detail"
+                      slot="contentBottom"
+                      v-for="(product,idx) in channel[item.channelId]"
+                      :key="idx"
+                    >
+                      <div class="flex_column" style="height:85px;padding: 12px 0;">
+                        <span class="fontSize_13 detailCell">
+                          <span class="color_3">物流码：{{product.barcode}}</span>
+                        </span>
+                        <span class="fontSize_13 color_9">{{product.exceptions}}</span>
+                        <span class="fontSize_13 color_9">扫码时间：{{product.scanTime}}</span>
+                      </div>
+                    </div>
+                    <div
+                      slot="more"
+                      style="background:#F0F1F3;text-algin:center;"
+                      @click="moreClick('00715FY38')"
+                    >点击更多...</div>
+                  </Collapse>
+                </van-cell>
+              </van-list>
+            </van-pull-refresh>
           </div>
         </div>
       </van-tab>
@@ -184,49 +197,48 @@
           </div>
           <div class="collapseList" v-else>
             <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-
-            <van-list
-              v-model="loading"
-              @load="onLoadTerminal('00715FY39')"
-              :finished="finishedTerminal"
-              finished-text="没有更多了"
-              :immediate-check="false"
-              offset="50"
+              <van-list
+                v-model="loading"
+                @load="onLoadTerminal('00715FY39')"
+                :finished="finishedTerminal"
+                finished-text="没有更多了"
+                :immediate-check="false"
+                offset="50"
               >
-              <van-cell v-for="(item,index) in downstreamList" :key="index">
-                <Collapse :slotscope="item" @unfold="unfoldDetail01" :isunfold="isUnfold">
-                  <div slot="contentTop">
-                    <div class="title">
-                      <span class="detailCell">
-                        <span class="fontSize_15 fontWeight color_3">终端：{{item.terminalName}}</span>
-                      </span>
-                      <span class="fontSize_13 color_9">正常：{{item.inbound}}</span>
-                      <span class="fontSize_13 color_9">违规：{{item.inboundViolation}}</span>
+                <van-cell v-for="(item,index) in downstreamList" :key="index">
+                  <Collapse :slotscope="item" @unfold="unfoldDetail01" :isunfold="isUnfold">
+                    <div slot="contentTop">
+                      <div class="title">
+                        <span class="detailCell">
+                          <span class="fontSize_15 fontWeight color_3">终端：{{item.terminalName}}</span>
+                        </span>
+                        <span class="fontSize_13 color_9">正常：{{item.inbound}}</span>
+                        <span class="fontSize_13 color_9">违规：{{item.inboundViolation}}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    class="detail"
-                    slot="contentBottom"
-                    v-for="(product,idx) in terminal[item.terminalId]"
-                    :key="idx"
-                  >
-                    <div class="flex_column" style="height:85px;padding: 12px 0;">
-                      <span class="fontSize_13 detailCell">
-                        <span class="color_3">物流码：{{product.barcode}}</span>
-                      </span>
-                      <span class="fontSize_13 color_9">{{product.exceptions}}</span>
+                    <div
+                      class="detail"
+                      slot="contentBottom"
+                      v-for="(product,idx) in terminal[item.terminalId]"
+                      :key="idx"
+                    >
+                      <div class="flex_column" style="height:85px;padding: 12px 0;">
+                        <span class="fontSize_13 detailCell">
+                          <span class="color_3">物流码：{{product.barcode}}</span>
+                        </span>
+                        <span class="fontSize_13 color_9">{{product.exceptions}}</span>
 
-                      <span class="fontSize_13 color_9">扫码时间：{{product.scanTime}}</span>
+                        <span class="fontSize_13 color_9">扫码时间：{{product.scanTime}}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div
-                    slot="more"
-                    style="background:#F0F1F3;text-algin:center;"
-                    @click="moreClick('00715FY40')"
-                  >点击更多...</div>
-                </Collapse>
-              </van-cell>
-            </van-list>
+                    <div
+                      slot="more"
+                      style="background:#F0F1F3;text-algin:center;"
+                      @click="moreClick('00715FY40')"
+                    >点击更多...</div>
+                  </Collapse>
+                </van-cell>
+              </van-list>
             </van-pull-refresh>
           </div>
         </div>
@@ -318,7 +330,6 @@ export default {
       distributerId: "", //经销商ID
       distributorName: "",
       code: "00715FY36",
-      value1: 0,
       options: [
         { text: "全部商品", value: 0 },
         { text: "新款商品", value: 1 },
@@ -331,19 +342,17 @@ export default {
       showProduct: false, //选择产品
       showOrder: false,
       columnsYear: yearArr,
-      columnsCategory: [
-        { text: "品类0", id: "0" },
-        { text: "品类1", id: "1" },
-        { text: "品类2", id: "2" }
-      ], //品类列表
+      columnsCategory: [ //品类列表来源后台
+        // { text: "品类0", id: "0" },
+      ],
       columnsProduct: [],
       columnsOrder: [],
-      columnsOrderType: [
+      columnsOrderType: [ //写死数据
         { text: "配额酒销售订单", id: "ZS01" },
         { text: "非配额销售订单", id: "ZS02" },
         { text: "批条酒销售订单", id: "ZS03" }
       ],
-      columnsOrderStatus: [
+      columnsOrderStatus: [ //写死数据
         { text: "新建", id: "E0001" },
         { text: "已保存，待提交", id: "E0002" },
         { text: "已提交，待审核", id: "E0003" },
@@ -358,7 +367,7 @@ export default {
         storageIn: "00",
         storageOut: "00",
         inventory: "00",
-        customerScan:"00"
+        customerScan: "00"
       },
       active: 0, //tabs
       activeNames: [1], //展开面板
@@ -374,21 +383,22 @@ export default {
         // { id: 2, planquantity: "600", monat: 2, execquantity: "6456" }
       ],
       OrderFulfillment: [], //订单执行
-      loading:false,
-      refreshing:false,
+      loading: false,
+      refreshing: false,
       PlaceList: [], //出库明细
       PlaceListDetail: [],
       channel: {}, //渠道扫码
-      error:false,
+      error: false,
       finishedOrder: false, //订单全部加载完
       downstreamList: [], //下游明细
       finishedTerminal: false, //下游全部加载完
+      finishedPlace: false, //出库明细全部加载完
       downstreamListDetail: [], //下游明细
       terminal: {}, //下游扫码
       currentYear: this.$moment(new Date()).format("YYYY"),
-      category:"品类",//品类
-      orderType:"订单类型",
-      orderStatus:"订单状态",
+      category: "品类", //品类
+      orderType: "订单类型",
+      orderStatus: "订单状态",
       isUnfold: false,
       paramsData: {
         distributerid: "",
@@ -399,12 +409,12 @@ export default {
         from: "2019-11-26",
         to: this.$moment(new Date()).format("YYYY-MM-DD"),
         pagination: {
-          pageSize: 5, //每页多少条
-          //   pageNumber: 1, //当前多少页
-          currentPage: 0
+          pageSize: 20, //每页多少条
+          //   pageNumber: 1, 
+          currentPage: 0 //当前多少页
         },
         page: 1, //订单执行的分页
-        pagesize: 5
+        pagesize: 20
       },
       detailPage: {
         //扫码明细分页
@@ -420,8 +430,8 @@ export default {
     this.paramsData.year = this.currentYear;
     this.paramsData.distributerid = this.distributerId;
     this.paramsData.distributerId = this.distributerId;
-    this.orderType = this.columnsOrderType[0].text
-    this.orderStatus = this.columnsOrderStatus[3].text
+    this.orderType = this.columnsOrderType[0].text;
+    this.orderStatus = this.columnsOrderStatus[3].text;
     let params41 = {
       code: "00715FY41",
       data: this.paramsData
@@ -442,9 +452,16 @@ export default {
         year: this.currentYear
       }
     };
+    let params45 = {
+      code: "00715FY45",
+      data: {
+        type: 1
+      }
+    };
     this.getDetail(params36); //计划执行
-    this.getDetail(params41);
-    this.getDetail(params43);
+    this.getDetail(params41); //产品分类列表
+    this.getDetail(params43); //出入库量
+    this.getDetail(params45);//品类列表
   },
   mounted() {
     let that = this;
@@ -462,16 +479,17 @@ export default {
   },
 
   methods: {
-    infoClick(){ //实时库存说明
-      this.$toast("此库存量为实时库存量")
+    infoClick() {
+      //实时库存说明
+      this.$toast("此库存量为实时库存量");
     },
-    outLink(){
+    outLink() {
       this.$router.push({
         path: "/outDetail",
         query: {
           distributorId: this.distributorId
         }
-      })
+      });
     },
     reset() {
       //重置
@@ -524,10 +542,11 @@ export default {
     pickerYear() {
       this.showYear = true;
     },
-    categoryClick(){ //选择品类
-      this.$toast('暂未支持')
-      return
-      this.showCategory = true
+    categoryClick() {
+      //选择品类
+      this.$toast("暂未开放");
+      return;
+      this.showCategory = true;
     },
     onConfirmYear(value, index) {
       //确定年度
@@ -539,14 +558,13 @@ export default {
         data: {
           distributerid: this.distributerId,
           year: value,
-          category:this.categoryId
+          category: this.categoryId //品类
         }
       };
       this.getDetail(params36);
     },
     onConfirmCategory(value, index) {
-      //确定年度
-      //   this.$toast(`当前值：${value}, 当前索引：${index}`);
+      //确定品类
       this.categoryId = value.id;
       this.category = value.text;
       this.showCategory = false;
@@ -555,7 +573,7 @@ export default {
         data: {
           distributerid: this.distributerId,
           year: this.currentYear,
-          category:this.categoryId
+          category: this.categoryId //品类
         }
       };
       this.getDetail(params36);
@@ -572,7 +590,8 @@ export default {
       this.getDetail(params);
       console.log(value);
     },
-    onConfirmOrder(value, index) { //确认订单类型和订单状态
+    onConfirmOrder(value, index) {
+      //确认订单类型和订单状态
       this.finishedOrder = true;
       this.showOrder = false;
       console.log(value);
@@ -582,10 +601,10 @@ export default {
       //   this.$toast(`当前值order：${value}, 当前索引：${index}`);
       if (this.orderClickType == "type") {
         this.paramsData.ordertype = this.columnsOrderType[index].id;
-        this.orderType = value.text
+        this.orderType = value.text;
       } else {
         this.paramsData.orderstutus = this.columnsOrderStatus[index].id;
-        this.orderStatus = value.text
+        this.orderStatus = value.text;
       }
       let params = {
         code: this.code,
@@ -595,7 +614,7 @@ export default {
     },
     tabsClick(value) {
       //卡片切换
-      this.loading = false //才可触发onLoad
+      this.loading = false; //才可触发onLoad
       this.detailPage.currentPage = 1;
       this.detailPage.page = 0;
       this.paramsData.page = 1; //1开始35接口用的page
@@ -609,8 +628,8 @@ export default {
           code: this.code,
           data: this.paramsData
         };
-        if (this.tableData.length>0) {
-          return
+        if (this.tableData.length > 0) {
+          return;
         }
       } else if (value == 1) {
         //订单执行
@@ -627,8 +646,8 @@ export default {
           code: this.code,
           data: this.paramsData
         };
-        if (this.OrderFulfillment.length>0) {
-          return
+        if (this.OrderFulfillment.length > 0) {
+          return;
         }
       } else if (value == 2) {
         //出库明细
@@ -637,8 +656,8 @@ export default {
           code: this.code,
           data: this.paramsData
         };
-        if (this.PlaceList.length>0) {
-          return
+        if (this.PlaceList.length > 0) {
+          return;
         }
       } else {
         //下游明细
@@ -649,8 +668,8 @@ export default {
           code: this.code,
           data: this.paramsData
         };
-        if (this.downstreamList.length>0) {
-          return
+        if (this.downstreamList.length > 0) {
+          return;
         }
       }
       this.getDetail(this.params);
@@ -661,7 +680,7 @@ export default {
       this.$Axios
         .post("/api/ddadapter/openApi/data/", params)
         .then(res => {
-          this.loading = false
+          this.loading = false;
           this.$ddapi.hidePreloader();
           let result = res.data.data;
           if (result.success) {
@@ -672,7 +691,7 @@ export default {
           }
         })
         .catch(e => {
-          this.loading = false
+          this.loading = false;
           this.$ddapi.hidePreloader();
           console.log(e);
         });
@@ -715,47 +734,48 @@ export default {
       }
       if (code == "00715FY41") {
         //产品选择列表
-      
       }
       if (code == "00715FY42") {
         // this.storageRecord.inventory = String(res.result);
       }
       if (code == "00715FY43") {
         //出入库量
-        
       }
     },
-    
+
     formatData(res, code) {
       //data数据格式化
       if (code == "00715FY36") {
         //计划执行
-        let planquantityTotal = 0
-        let execquantityTotal = 0
+        let planquantityTotal = 0;
+        let execquantityTotal = 0;
         this.tableData = res.result;
-        this.tableData.map(item=>{
-          planquantityTotal = planquantityTotal+item.planquantity
-          execquantityTotal = execquantityTotal+item.execquantity
-        })
+        this.tableData.map(item => {
+          planquantityTotal = planquantityTotal + item.planquantity;
+          execquantityTotal = execquantityTotal + item.execquantity;
+        });
         this.tableData.push({
-          monat:'合计',
-          planquantity:planquantityTotal,
-          execquantity:execquantityTotal
-        })
+          monat: "合计",
+          planquantity: planquantityTotal,
+          execquantity: execquantityTotal
+        });
       }
       if (code == "00715FY35") {
         //订单执行
         // this.OrderFulfillment = res.result
-        if (this.refreshing) { //下拉刷新重置
-          this.OrderFulfillment = []
+        if (this.refreshing) {
+          //下拉刷新重置
+          this.OrderFulfillment = [];
           this.refreshing = false;
         }
         res.result.map(item => {
-            this.OrderFulfillment.push(item);
-          });
+          this.OrderFulfillment.push(item);
+        });
         // console.log(this.uniqueArray(this.OrderFulfillment,'orderid'));
-        this.OrderFulfillment = this.$uniqueArray(this.OrderFulfillment,'orderid')
-        
+        this.OrderFulfillment = this.$uniqueArray(
+          this.OrderFulfillment,
+          "orderid"
+        );
 
         // 这里去重
 
@@ -766,7 +786,15 @@ export default {
       }
       if (code == "00715FY37") {
         //出库明细   无分页
+        if (this.refreshing) {
+          //下拉刷新重置
+          this.PlaceList = [];
+          this.refreshing = false;
+        }
         this.PlaceList = res.result;
+        if (res.result) {
+          this.finishedPlace = true;
+        }
       }
       if (code == "00715FY38") {
         //出库明细扫码明细
@@ -789,15 +817,19 @@ export default {
       if (code == "00715FY39") {
         //下游明细
         // this.paramsData.pagination.currentPage++; //成功以后加一页
-        if (this.refreshing) { //下拉刷新重置
-          this.downstreamList = []
+        if (this.refreshing) {
+          //下拉刷新重置
+          this.downstreamList = [];
           this.refreshing = false;
         }
         if (res.result.pagination.currentPage) {
           res.result.detail.map((item, index) => {
             this.downstreamList.push(item);
           });
-          this.downstreamList = this.$uniqueArray(this.downstreamList,'terminalId')
+          this.downstreamList = this.$uniqueArray(
+            this.downstreamList,
+            "terminalId"
+          );
         } else {
           this.downstreamList = res.result.detail;
         }
@@ -849,7 +881,7 @@ export default {
           code: "00715FY42",
           data: this.paramsData
         };
-        this.getDetail(params42);
+        this.getDetail(params42); //库存量
       }
       if (code == "00715FY42") {
         this.storageRecord.inventory = String(res.result);
@@ -859,7 +891,13 @@ export default {
         this.storageRecord.storageIn = res.result.in;
         this.storageRecord.storageOut = res.result.out;
         this.storageRecord.customerScan = res.result.customerScan;
-        
+      }
+      if (code == "00715FY45") { //品类
+        res.result.map(item => {
+          item.text = item.name;
+          return item;
+        });
+        this.columnsCategory = res.result
       }
     },
     unfoldDetail(slot, isUnfold) {
@@ -944,8 +982,8 @@ export default {
       // 重新加载数据
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = false;
-      this.paramsData.page = 1
-      this.paramsData.pagination.currentPage = 0
+      this.paramsData.page = 1;
+      this.paramsData.pagination.currentPage = 0;
       let params = {
         code: this.code,
         data: this.paramsData
@@ -1010,8 +1048,8 @@ export default {
   .panelContent {
     .none_dataImg {
       height: calc(100% - 24px);
-	  background-color: #ffffff;
-	  margin-top: 8px;
+      background-color: #ffffff;
+      margin-top: 8px;
     }
   }
 
@@ -1098,5 +1136,4 @@ export default {
   //   border: 1px solid #e5e5e5;
   background-color: #ffffff;
 }
-
 </style>

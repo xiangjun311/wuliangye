@@ -130,3 +130,9 @@ body{
 .van-list__loading{
     display: none;
 }
+.van-cell__title{
+    flex: none;
+}
+.van-cell__value{
+    flex: 1;
+}

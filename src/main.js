@@ -71,7 +71,11 @@ let jsApiList = [
 // /api/ddadapter/dingding/tZero/getJsTicketPc
 // 测试环境的corpid：ding7da0a93f20669022ee0f45d8e4f7c288
 //生产 ding5da63018b1631f1b35c2f4657eb6378f
-dingTalkM.authLogin('ding7da0a93f20669022ee0f45d8e4f7c288', '/api/ddadapter/dingding/timeReport/getUserCode').then(res => {
+console.log(process.env.NODE_ENV);
+const devID = 'ding7da0a93f20669022ee0f45d8e4f7c288'
+const proID = 'ding5da63018b1631f1b35c2f4657eb6378f'
+ const corpId = process.env.NODE_ENV === 'development' ? devID : proID
+dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').then(res => {
 	console.log("进入免登")
 	// Toast("进入免登")
 	console.log(res)
@@ -82,7 +86,6 @@ dingTalkM.authLogin('ding7da0a93f20669022ee0f45d8e4f7c288', '/api/ddadapter/ding
 	sessionStorage.setItem("roleid", res.roleid);
 
 	if (res.errcode == 0) {
-		// router.replace("/dealersList")
 		new Vue({
 			router,
 			store,
@@ -99,18 +102,11 @@ dingTalkM.authLogin('ding7da0a93f20669022ee0f45d8e4f7c288', '/api/ddadapter/ding
 	console.log(err)
 })
 
-// axios.interceptors.request.use(config => {
-//   config.headers.tokenid = sessionStorage.getItem("tokenid");//正式的
-//   // config.headers.tokenid ="123";//测试的死数据
-//   return config;
-// }, err => {
-//   return Promise.reject(err);
-// });
-//************************** */
+if (process.env.NODE_ENV === 'development') {
+	new Vue({
+		router,
+		store,
+		render: h => h(App)
+	}).$mount("#app");
+}
 
-
-new Vue({
-  router,
-  store,
-  render: h => h(App)
-}).$mount("#app");
