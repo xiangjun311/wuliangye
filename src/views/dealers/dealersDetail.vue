@@ -330,11 +330,6 @@ export default {
       distributerId: "", //经销商ID
       distributorName: "",
       code: "00715FY36",
-      options: [
-        { text: "全部商品", value: 0 },
-        { text: "新款商品", value: 1 },
-        { text: "活动商品", value: 2 }
-      ],
       showOverlay: false, //遮罩
       showDate: false,
       showYear: false, //选择年
@@ -364,10 +359,10 @@ export default {
       maxDate: new Date(),
       currentDate: new Date(),
       storageRecord: {
-        storageIn: "00",
-        storageOut: "00",
-        inventory: "00",
-        customerScan: "00"
+        storageIn: "--",
+        storageOut: "--",
+        inventory: "--",
+        customerScan: "--"
       },
       active: 0, //tabs
       activeNames: [1], //展开面板

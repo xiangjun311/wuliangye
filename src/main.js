@@ -79,11 +79,12 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').th
 	console.log("进入免登")
 	// Toast("进入免登")
 	console.log(res)
-	sessionStorage.setItem("warinfo", JSON.stringify(res.warinfo));//战区
-	sessionStorage.setItem("baseinfo", JSON.stringify(res.baseinfo));//基地
-	sessionStorage.setItem("userid", res.userid);//当前登录人id
+	// sessionStorage.setItem("warinfo", JSON.stringify(res.warinfo));//战区
+	// sessionStorage.setItem("baseinfo", JSON.stringify(res.baseinfo));//基地
+	// sessionStorage.setItem("userid", res.userid);//当前登录人id
+	sessionStorage.setItem("userphone", res.userMobile);//当前登录人电话
 	sessionStorage.setItem("username", res.username);//当前登录人
-	sessionStorage.setItem("roleid", res.roleid);
+	// sessionStorage.setItem("roleid", res.roleid);
 
 	if (res.errcode == 0) {
 		new Vue({
@@ -103,10 +104,13 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').th
 })
 
 if (process.env.NODE_ENV === 'development') {
-	new Vue({
-		router,
-		store,
-		render: h => h(App)
-	}).$mount("#app");
+	console.log('本地测试');
+	// new Vue({
+	// 	router,
+	// 	store,
+	// 	render: h => h(App)
+	// }).$mount("#app");
+}else{
+	console.log("正式环境");
 }
 

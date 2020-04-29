@@ -6,28 +6,32 @@
       <van-search v-model="value" placeholder="搜索" @search="onSearch" @cancel="onCancel" />
     </form>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-    <van-list
-      class="list"
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      :error.sync="error"
-      error-text="请求失败，点击重新加载"
-      @load="onLoad"
-      offset="50"
-    >
-      <van-cell
-        v-for="(item,index) in dealersList"
-        :key="index"
-        :title="item.distributorName"
-        @click="goDetail(item)"
+      <van-list
+        class="list"
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        :error.sync="error"
+        error-text="请求失败，点击重新加载"
+        @load="onLoad"
+        :immediate-check="true"
+        offset="50"
       >
-        <div>姓名：{{item.name}}</div>
-        <!-- <div>姓名：{{item.userName}}</div> -->
-        <div>经销商编码：{{item.distributorId}}</div>
-        <div>经销商手机号：{{item.phone}}</div>
-      </van-cell>
-    </van-list>
+        <van-cell
+          v-for="(item,index) in dealersList"
+          style="flex-direction: column;"
+          :key="index"
+          :title="item.orderCustomerName"
+          @click="goDetail(item)"
+        >
+          <!-- <div>姓名：{{item.name}}</div> -->
+          <div>姓名：{{item.userName}}</div>
+          <!-- <div>经销商编码：{{item.distributorId}}</div> -->
+          <div>经销商手机号：{{item.phone}}</div>
+          <div>经销商编码：{{item.orderCustomerCode}}</div>
+          <!-- <div>经销商手机号：{{item.phone}}</div> -->
+        </van-cell>
+      </van-list>
     </van-pull-refresh>
   </div>
 </template>
@@ -40,7 +44,7 @@ export default {
       list: [],
       loading: false,
       finished: false,
-      refreshing:false,
+      refreshing: false,
       error: false,
       dealersList: [],
       index: 0,
@@ -68,30 +72,47 @@ export default {
         ],
         msg: ""
       },
+      // params: {
+      //   code: "00715FY44", //00715FY34
+      //   data: {
+      //     distributorId: "",
+      //     distributorName: "",
+      //     name: "",
+      //     pageNum: 0,
+      //     pageSize: 20,
+      //     phone: "",
+      //     userId: "",
+      //     userName: ""
+      //   }
+      // },
       params: {
-        code: "00715FY34", //00715FY34
+        code: "00715FY44",
         data: {
-          distributorId: "",
-          distributorName: "",
           name: "",
-          pageNum: 0,
-          pageSize: 20,
           phone: "",
-          userId: "",
-          userName: ""
-        },
+          khname:'',
+          pagesize: 20,
+          pageindex: 0
+        }
       }
     };
   },
   created() {
     this.$ddapi.setTitle("经销商列表");
     this.$ddapi.navigationSetRight("", false, false);
-	  this.params.data.userId = sessionStorage.getItem('userid')
-    
+    if (process.env.NODE_ENV === 'development') {
+      console.log('本地测试');
+      this.params.data.phone = "18683100717"
+      this.params.data.name = "金灿"
+    }else{
+      console.log("正式环境");
+      this.params.data.phone = sessionStorage.getItem("userphone").slice(4);
+      this.params.data.name = sessionStorage.getItem("username");
+    }
   },
   methods: {
     getList() {
-    //   this.params.data.pagination.currentPage++;
+      //   this.params.data.pagination.currentPage++;
       console.log(this.params);
 
       this.$ddapi.showLoading("加载中");
@@ -99,35 +120,37 @@ export default {
       this.$Axios
         .post("/api/ddadapter/openApi/data/", this.params)
         .then(res => {
-          
           // 加载状态结束
           this.$ddapi.hidePreloader();
 
           this.loading = false;
           let result = res.data.data;
           if (result.success) {
-            if (this.refreshing) { //下拉刷新重置
-              this.dealersList = []
+            if (this.refreshing) {
+              //下拉刷新重置
+              this.dealersList = [];
               this.refreshing = false;
             }
-            result.result.list.map(item => {
+            result.result.receiveItem.map(item => {
               this.dealersList.push(item);
             });
-            console.log(result.result.list);
-            
+            console.log(result.result.receiveItem);
+
             // this.dealersList = this.$uniqueArray(this.dealersList,'distributorId') //去重
             console.log(this.dealersList);
-            
+
             // 数据全部加载完成
-            if (this.dealersList.length >= result.result.total) {
+            if (this.dealersList.length >= result.result.pagenum) {
+            // if (!result.result.receiveItem.length) {
               //等于数据总条数total
               this.finished = true;
             }
           } else {
             this.$toast(result.errorMsg);
-            this.dealersList = []
-          }
+            this.dealersList = [];
+            this.finished = true;
 
+          }
         })
         .catch(e => {
           console.log(e);
@@ -138,9 +161,11 @@ export default {
     },
 
     onSearch(val) {
-      // this.$toast(val);
-      this.dealersList = []
-      this.params.data.name = val;
+      // this.$toast("暂未开放查询功能");
+      // return
+
+      this.dealersList = [];
+      this.params.data.khname = val;
       this.getList();
     },
     onCancel() {
@@ -148,12 +173,12 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      this.params.data.pageNum++;
+      this.params.data.pageindex++;
       this.getList();
     },
     onRefresh() {
       // 清空列表数据刷新
-      this.params.data.pageNum = 1
+      this.params.data.pageindex = 1;
 
       this.finished = false;
       // 重新加载数据
@@ -167,8 +192,10 @@ export default {
       this.$router.push({
         path: "/dealersDetail",
         query: {
-          distributorId: item.distributorId,
-          distributorName: item.distributorName
+          // distributorId: item.distributorId,
+          // distributorName: item.distributorName
+          distributorId: item.orderCustomerCode,
+          distributorName: item.orderCustomerName
         }
       });
     }
