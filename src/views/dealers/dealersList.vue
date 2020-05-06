@@ -25,9 +25,9 @@
           @click="goDetail(item)"
         >
           <!-- <div>姓名：{{item.name}}</div> -->
-          <div>姓名：{{item.userName}}</div>
+          <!-- <div>姓名：{{item.userName}}</div> -->
           <!-- <div>经销商编码：{{item.distributorId}}</div> -->
-          <div>经销商手机号：{{item.phone}}</div>
+          <!-- <div>经销商手机号：{{item.phone}}</div> -->
           <div>经销商编码：{{item.orderCustomerCode}}</div>
           <!-- <div>经销商手机号：{{item.phone}}</div> -->
         </van-cell>
@@ -100,10 +100,10 @@ export default {
   created() {
     this.$ddapi.setTitle("经销商列表");
     this.$ddapi.navigationSetRight("", false, false);
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development'||sessionStorage.getItem("username")=="向俊") {
       console.log('本地测试');
-      this.params.data.phone = "18683100717"
-      this.params.data.name = "金灿"
+      this.params.data.phone = "13608293629"
+      this.params.data.name = "刘力"
     }else{
       console.log("正式环境");
       this.params.data.phone = sessionStorage.getItem("userphone").slice(4);
@@ -223,7 +223,7 @@ export default {
 
 .list .van-cell {
   /* width: 359px; */
-  height: 110px;
+  // height: 110px;
   background: #ffffff;
   border-radius: 2px;
   box-shadow: 0px 2px 4px 0px rgba(239, 239, 239, 0.5);

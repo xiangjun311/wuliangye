@@ -491,6 +491,7 @@ export default {
       this.paramsData.from = "2019-11-26";
       this.paramsData.to = this.$moment(new Date()).format("YYYY-MM-DD");
       this.paramsData.productId = this.columnsProduct[0].id;
+      this.paramsData.productName = this.columnsProduct[0].name;
     },
     screenSearch() {
       //筛选查询
@@ -576,14 +577,17 @@ export default {
     onConfirmProduct(value, index) {
       //确定产品
       this.showProduct = false;
-      //   this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
+        // this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
       this.paramsData.productId = this.columnsProduct[index].id;
-      let params = {
-        code: this.code,
-        data: this.paramsData
-      };
-      this.getDetail(params);
-      console.log(value);
+      this.paramsData.productName = this.columnsProduct[index].name;
+      this.showDate = false;
+
+      // let params = {
+      //   code: this.code,
+      //   data: this.paramsData
+      // };
+      // this.getDetail(params);
+      // console.log(value);
     },
     onConfirmOrder(value, index) {
       //确认订单类型和订单状态
