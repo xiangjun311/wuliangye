@@ -58,7 +58,7 @@
             class="none_dataImg flex_column_center"
             v-if="!tableData.length"
             style="height: calc(100% - 44px);margin:0"
-          >
+            >
             <img style="width:188px;height:100px" src="../../assets/img/none_data@2x.png" alt />
             <span style="color:#b2b2b2;font-size:15px;line-height:31px;">暂无报表~</span>
           </div>
@@ -429,7 +429,7 @@ export default {
     this.orderStatus = this.columnsOrderStatus[3].text;
     let params41 = {
       code: "00715FY41",
-      data: this.paramsData
+      data: {}
     };
 
     let params43 = {
@@ -456,7 +456,7 @@ export default {
     this.getDetail(params36); //计划执行
     this.getDetail(params41); //产品分类列表
     this.getDetail(params43); //出入库量
-    this.getDetail(params45);//品类列表
+    // this.getDetail(params45);//品类列表
   },
   mounted() {
     let that = this;
@@ -625,7 +625,10 @@ export default {
         this.paramsData.year = this.currentYear;
         this.params = {
           code: this.code,
-          data: this.paramsData
+          data: {
+            distributerid: this.distributerId,
+            year: this.currentYear
+          }
         };
         if (this.tableData.length > 0) {
           return;
@@ -655,6 +658,14 @@ export default {
           code: this.code,
           data: this.paramsData
         };
+        if (this.productLoading) {
+          this.$toast("正在获取产品列表，请稍等...")
+          return
+        }
+        if (this.columnsProduct.length<=0) {
+          this.$toast("产品列表获取失败，请刷新页面或重新进入页面")
+          return
+        }
         if (this.PlaceList.length > 0) {
           return;
         }
@@ -667,6 +678,14 @@ export default {
           code: this.code,
           data: this.paramsData
         };
+        if (this.productLoading) {
+          this.$toast("正在获取产品列表，请稍等...")
+          return
+        }
+        if (this.columnsProduct.length<=0) {
+          this.$toast("产品列表获取失败，请刷新页面或重新进入页面...")
+          return
+        }
         if (this.downstreamList.length > 0) {
           return;
         }
@@ -675,6 +694,9 @@ export default {
     },
     getDetail(params) {
       // this.loading = true
+      if (params.code == '00715FY41') { //判断产品列表是否请求回来
+        this.productLoading = true
+      }
       this.$ddapi.showLoading("加载中");
       this.$Axios
         .post("/api/ddadapter/openApi/data/", params)
@@ -733,9 +755,11 @@ export default {
       }
       if (code == "00715FY41") {
         //产品选择列表
+        this.productLoading = false
+        this.$toast("产品列表请求失败，请刷新页面或重新进入页面")
       }
       if (code == "00715FY42") {
-        // this.storageRecord.inventory = String(res.result);
+        
       }
       if (code == "00715FY43") {
         //出入库量
@@ -832,9 +856,7 @@ export default {
         } else {
           this.downstreamList = res.result.detail;
         }
-        // res.result.detail.map(item => {
-        //   this.downstreamList.push(item);
-        // });
+      
         // 数据全部加载完成
         if (
           this.downstreamList.length >=
@@ -842,18 +864,13 @@ export default {
         ) {
           //等于数据总条数total
           this.finishedTerminal = true;
-          //   this.$toast(this.downstreamList.length)
         }
-        // this.downstreamList = res.result.detail;
       }
       if (code == "00715FY40") {
         //下游明细扫码明细
         if (res.result.detail.length == 0) {
           this.$toast("暂无更多明细");
         }
-        // res.result.detail.map((item, index) => {
-        //   this.downstreamListDetail.push(item);
-        // });
         if (res.result.pagination.currentPage) {
           res.result.detail.map((item, index) => {
             this.downstreamListDetail.push(item);
@@ -866,6 +883,7 @@ export default {
         ]);
       }
       if (code == "00715FY41") {
+        this.productLoading = false
         //产品选择列表
         res.result.map(item => {
           item.text = item.name;
@@ -878,7 +896,10 @@ export default {
         console.log(this.columnsProduct);
         let params42 = {
           code: "00715FY42",
-          data: this.paramsData
+          data: {
+            distributerId:this.distributerId,
+            productId:this.columnsProduct[0].id
+          }
         };
         this.getDetail(params42); //库存量
       }

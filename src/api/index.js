@@ -37,14 +37,14 @@ Axios.interceptors.response.use(
 		if (config.data && config.data.statusCode === 200) {
 			// Toast('response请求成功')
 		} else {
-			Toast(config.data.message||'response请求错误')
+			Toast(config.data.message||'请求错误')
 			return Promise.reject(config);
 		}
 		return config;
 	},
 	error => {
 		console.log(error.response)
-		Toast("error请求错误");
+		Toast("请求错误");
 		if (error.status === 200) {
 			return error;
 		} else if (error.response && error.response.status === 500) {

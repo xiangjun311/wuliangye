@@ -48,43 +48,6 @@ export default {
       error: false,
       dealersList: [],
       index: 0,
-      res: {
-        code: 0,
-        data: [
-          {
-            compName: "宜宾市辉煌贸易有限公司",
-            name: "张三",
-            code: 1,
-            phone: "13900000000"
-          },
-          {
-            compName: "宜宾市辉煌贸易有限公司",
-            name: "张三",
-            code: 2,
-            phone: "13900000000"
-          },
-          {
-            compName: "宜宾市辉煌贸易有限公司",
-            name: "张三",
-            code: 3,
-            phone: "13900000000"
-          }
-        ],
-        msg: ""
-      },
-      // params: {
-      //   code: "00715FY44", //00715FY34
-      //   data: {
-      //     distributorId: "",
-      //     distributorName: "",
-      //     name: "",
-      //     pageNum: 0,
-      //     pageSize: 20,
-      //     phone: "",
-      //     userId: "",
-      //     userName: ""
-      //   }
-      // },
       params: {
         code: "00715FY44",
         data: {
@@ -100,7 +63,7 @@ export default {
   created() {
     this.$ddapi.setTitle("经销商列表");
     this.$ddapi.navigationSetRight("", false, false);
-    if (process.env.NODE_ENV === 'development'||sessionStorage.getItem("username")=="向俊") {
+    if (process.env.NODE_ENV === 'development') { //||sessionStorage.getItem("username")=="向俊"
       console.log('本地测试');
       this.params.data.phone = "13608293629"
       this.params.data.name = "刘力"
@@ -112,11 +75,8 @@ export default {
   },
   methods: {
     getList() {
-      //   this.params.data.pagination.currentPage++;
       console.log(this.params);
-
       this.$ddapi.showLoading("加载中");
-
       this.$Axios
         .post("/api/ddadapter/openApi/data/", this.params)
         .then(res => {
