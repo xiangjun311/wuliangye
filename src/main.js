@@ -75,7 +75,7 @@ console.log(process.env.NODE_ENV);
 const devID = 'ding7da0a93f20669022ee0f45d8e4f7c288'
 const proID = 'ding5da63018b1631f1b35c2f4657eb6378f'
  const corpId = process.env.NODE_ENV === 'development' ? devID : proID
-dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').then(res => {
+dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/dealerCheck/getUserCode').then(res => {
 	console.log("进入免登")
 	// Toast("进入免登")
 	console.log(res)
@@ -102,14 +102,12 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').th
 	Toast("免登失败")
 	console.log(err)
 })
+console.log(process.env);
 
 if (process.env.NODE_ENV === 'development') {
-	console.log('本地测试');
-	// new Vue({
-	// 	router,
-	// 	store,
-	// 	render: h => h(App)
-	// }).$mount("#app");
+	console.log('本地环境');
+}else if (process.env.NODE_ENV === 'test'){
+	console.log("测试环境");
 }else{
 	console.log("正式环境");
 }

@@ -65,8 +65,8 @@ export default {
     this.$ddapi.navigationSetRight("", false, false);
     if (process.env.NODE_ENV === 'development') { //||sessionStorage.getItem("username")=="向俊"
       console.log('本地测试');
-      this.params.data.phone = "13608293629"
-      this.params.data.name = "刘力"
+      // this.params.data.phone = "13608293629"
+      // this.params.data.name = "刘力"
     }else{
       console.log("正式环境");
       this.params.data.phone = sessionStorage.getItem("userphone").slice(4);

@@ -24,12 +24,13 @@ function createProxy(params) {
   return result;
 }
 
-
+const Timestamp = new Date().getTime()
 module.exports = {
   lintOnSave:false,
-  publicPath: '/treport/mob/',
-  // outputDir: path.resolve(__dirname, '../dist'),//打包dist路径
-
+  publicPath: process.env.NODE_ENV === 'development' ? './' : '/treport/mob/',
+  // publicPath: '/treport/mob/',
+  outputDir: path.resolve(__dirname, './treportMob'),//打包dist路径
+  filenameHashing: true,//hash
   assetsDir: 'static',
   devServer: {
     host: '0.0.0.0',
@@ -43,8 +44,8 @@ module.exports = {
     // proxy: createProxy(proxy)
     proxy: {
       '/': {
-        target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
-        // target: 'http://10.0.134.94:85/', // 内网10.0.134.94:85
+        // target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
+        target: 'http://10.0.134.94:85/', // 内网10.0.134.94:85
         // target: process.env.NODE_ENV === 'development' ? 'http://10.0.134.94:85/':'http://218.89.67.51:85/',
         changeOrigin: true,
         pathRewrite: {
@@ -55,6 +56,7 @@ module.exports = {
     // public: '192.168.0.132:8080'  // 本地ip
    
   },
+
   configureWebpack:(config)=> {
     config.resolve={
       extensions: [".js", ".vue", ".json", ".less"],
