@@ -27,8 +27,8 @@ function createProxy(params) {
 const Timestamp = new Date().getTime()
 module.exports = {
   lintOnSave:false,
-  publicPath: process.env.NODE_ENV === 'development' ? './' : '/treport/mob/',
-  // publicPath: '/treport/mob/',
+  // publicPath: process.env.NODE_ENV === 'development' ? './' : '/treport/mob/',
+  publicPath: '/treport/mob/',
   outputDir: path.resolve(__dirname, './treportMob'),//打包dist路径
   filenameHashing: true,//hash
   assetsDir: 'static',
@@ -44,8 +44,8 @@ module.exports = {
     // proxy: createProxy(proxy)
     proxy: {
       '/': {
-        // target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
-        target: 'http://10.0.134.94:85/', // 内网10.0.134.94:85
+        target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
+        // target: 'http://10.0.134.94:85/', // 内网10.0.134.94:85
         // target: process.env.NODE_ENV === 'development' ? 'http://10.0.134.94:85/':'http://218.89.67.51:85/',
         changeOrigin: true,
         pathRewrite: {

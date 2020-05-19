@@ -1,5 +1,6 @@
 import Vue from "vue";
 import App from "./App.vue";
+import Error from "@/views/error.vue"
 import router from "./router";
 import store from "./store";
 
@@ -43,39 +44,17 @@ Vue.prototype.$uniqueArray = function(array, key){ //JSON去重
 	}
 	return result;
   }
-// 钉钉鉴权需要的jsapi列表
-let jsApiList = [
-	'device.launcher.checkInstalledApps',
-	'biz.contact.choose',
-	'biz.util.uploadImage',
-	"biz.user.get",
-	'device.launcher.launchApp',
-	"device.launcher.checkInstalledApps",
-	'biz.chat.openSingleChat',
-	'biz.calendar.chooseOneDay',
-	'biz.util.share',
-	'biz.contact.complexPicker',
-	'biz.util.uploadImageFromCamera',
-	'biz.util.datepicker',
-	'biz.map.search',
-	'biz.map.view',
-	'biz.map.locate',
-	'device.geolocation.get',
-	'biz.telephone.showCallMenu',
-]
 
 // 鉴权免登调试
 
 ///*********************** */
 // /api/ddadapter/dingding/tZero/getJsTicketMob
 // /api/ddadapter/dingding/tZero/getJsTicketPc
-// 测试环境的corpid：ding7da0a93f20669022ee0f45d8e4f7c288
-//生产 ding5da63018b1631f1b35c2f4657eb6378f
 console.log(process.env.NODE_ENV);
 const devID = 'ding7da0a93f20669022ee0f45d8e4f7c288'
 const proID = 'ding5da63018b1631f1b35c2f4657eb6378f'
  const corpId = process.env.NODE_ENV === 'development' ? devID : proID
-dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/dealerCheck/getUserCode').then(res => {
+dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').then(res => {
 	console.log("进入免登")
 	// Toast("进入免登")
 	console.log(res)
@@ -85,21 +64,27 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/dealerCheck/getUserCode').t
 	sessionStorage.setItem("userphone", res.userMobile);//当前登录人电话
 	sessionStorage.setItem("username", res.username);//当前登录人
 	// sessionStorage.setItem("roleid", res.roleid);
-
+// console.log(App,Error);
+	new Vue({
+		router,
+		store,
+		render: h => h(App)
+	}).$mount("#app");
 	if (res.errcode == 0) {
-		new Vue({
-			router,
-			store,
-			render: h => h(App)
-		}).$mount("#app");
+		router.replace({
+            path: '/dealersList'
+        })
 	} else {
-		Toast(res.errmsg);
+		console.log(res);
+	
+		location.href  = '#/error?type=getCodeErr'
 	}
 	dd.error(function (res) {
 		console.log(res)
 	})
 }, err => {
 	Toast("免登失败")
+	location.href  = '#/error?type=getCodeErr'
 	console.log(err)
 })
 console.log(process.env);
@@ -111,4 +96,3 @@ if (process.env.NODE_ENV === 'development') {
 }else{
 	console.log("正式环境");
 }
-

@@ -109,7 +109,8 @@ export default {
             this.$toast(result.errorMsg);
             this.dealersList = [];
             this.finished = true;
-
+            this.isError = true;
+            this.error = true;
           }
         })
         .catch(e => {
@@ -117,6 +118,7 @@ export default {
           this.loading = false;
           this.$ddapi.hidePreloader();
           this.error = true;
+          this.isError = true;
         });
     },
 
@@ -133,7 +135,11 @@ export default {
     },
     onLoad() {
       // 异步更新数据
-      this.params.data.pageindex++;
+      if (this.isError) {
+        this.params.data.pageindex = 1;
+      } else {
+        this.params.data.pageindex++;
+      }
       this.getList();
     },
     onRefresh() {

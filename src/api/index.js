@@ -44,11 +44,14 @@ Axios.interceptors.response.use(
 	},
 	error => {
 		console.log(error.response)
-		Toast("请求错误");
 		if (error.status === 200) {
+			Toast("请求错误");
 			return error;
 		} else if (error.response && error.response.status === 500) {
+			Toast("请求错误");
 			return error;
+		}else if(error.response.status === 404) {
+			location.href  = '#/error?type=404'
 		}
 		return Promise.reject(error);
 	}

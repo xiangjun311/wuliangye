@@ -1,42 +1,41 @@
 <template>
   <div style="height: 100%;" class="dealersDetail">
     <!-- <Header title="经销商详情" rightText="筛选"></Header> -->
-    <div class="detailTop">
+    <div class="detailTop" :style="{height:isUp?'140px':'83px'}">
       <div class="comp fontWeight color_3 fontSize_15">{{distributorName}}</div>
       <div class="storageRecord">
-        <div>
-          <div class="fontSize_18 color_3">{{storageRecord.storageIn}}</div>
+        <div class="cell">
+          <div class="fontSize_18 color_3">{{storageRecord.startingInventoryNum}}</div>
+          <div class="fontSize_13 color_9">期初库存</div>
+        </div>
+        <div class="cell">
+          <div class="fontSize_18 color_3">{{storageRecord.endingInventoryNum}}</div>
+          <div class="fontSize_13 color_9">库存量</div>
+        </div>
+        <div class="cell">
+          <div class="fontSize_18 color_3">{{storageRecord.inventoryDifferenceNum}}</div>
+          <div class="fontSize_13 color_9">盘点差异量</div>
+        </div>
+        <div class="cell">
+          <div class="fontSize_18 color_3">{{storageRecord.inboundNum}}</div>
           <div class="fontSize_13 color_9">入库量</div>
         </div>
-        <!-- <div>
-          <div class="fontSize_18 color_3">{{storageRecord.storageOut}}</div>
-          <div class="fontSize_13 color_9">合规出库量</div>
-        </div>
-        <div>
-          <div class="fontSize_18 color_3">{{storageRecord.customerScan}}</div>
-          <div class="fontSize_13 color_9">下游入库合计</div>
-        </div>-->
-        <!-- <div>
-          <div class="fontSize_18 color_3">{{storageRecord.customerScan}}</div>
-          <div class="fontSize_13 color_9">盘点库存</div>
-          <div class="fontSize_13 color_9">盘点日期：2020-04-20</div>
-        </div>-->
-        <div>
-          <!-- <div class="fontSize_18 color_3 link" @click="outLink">{{storageRecord.storageOut}}</div> -->
-          <div class="fontSize_18 color_3">{{storageRecord.storageOut}}</div>
+        <div class="cell">
+          <div class="fontSize_18 color_3">{{storageRecord.outboundNum}}</div>
           <div class="fontSize_13 color_9">出库量</div>
         </div>
-        <div>
+        <!-- <div class="cell">
           <div class="fontSize_18 color_3">{{storageRecord.inventory}}</div>
           <div class="fontSize_13 color_9">
             实时库存量
             <van-icon name="info" size="10" @click="infoClick" />
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
+    <div class="topUp color_9 fontSize_10" @click="isUp=!isUp"><van-icon :name="isUp?'arrow-up':'arrow-down'" />{{!isUp?'展开':'收起'}}</div>
 
-    <van-tabs v-model="active" animated color="#F13D3D" @click="tabsClick">
+    <van-tabs v-model="active" animated color="#F13D3D" @click="tabsClick" :style="{height:!isUp?'calc(100% - 26px)':'calc(100% - 83px)'}">
       <van-tab title="计划执行">
         <div class="panelBtn" style="background: #ffffff;margin:0 0 8px 0;padding:0">
           <div
@@ -58,7 +57,7 @@
             class="none_dataImg flex_column_center"
             v-if="!tableData.length"
             style="height: calc(100% - 44px);margin:0"
-            >
+          >
             <img style="width:188px;height:100px" src="../../assets/img/none_data@2x.png" alt />
             <span style="color:#b2b2b2;font-size:15px;line-height:31px;">暂无报表~</span>
           </div>
@@ -337,17 +336,20 @@ export default {
       showProduct: false, //选择产品
       showOrder: false,
       columnsYear: yearArr,
-      columnsCategory: [ //品类列表来源后台
+      columnsCategory: [
+        //品类列表来源后台
         // { text: "品类0", id: "0" },
       ],
       columnsProduct: [],
       columnsOrder: [],
-      columnsOrderType: [ //写死数据
+      columnsOrderType: [
+        //写死数据
         { text: "配额酒销售订单", id: "ZS01" },
         { text: "非配额销售订单", id: "ZS02" },
         { text: "批条酒销售订单", id: "ZS03" }
       ],
-      columnsOrderStatus: [ //写死数据
+      columnsOrderStatus: [
+        //写死数据
         { text: "新建", id: "E0001" },
         { text: "已保存，待提交", id: "E0002" },
         { text: "已提交，待审核", id: "E0003" },
@@ -359,10 +361,11 @@ export default {
       maxDate: new Date(),
       currentDate: new Date(),
       storageRecord: {
-        storageIn: "--",
-        storageOut: "--",
-        inventory: "--",
-        customerScan: "--"
+        inventoryDifferenceNum: "--",//差异
+        inboundNum: "--",
+        outboundNum: "--",
+        startingInventoryNum:"--", //期初
+        endingInventoryNum: "--" //期末
       },
       active: 0, //tabs
       activeNames: [1], //展开面板
@@ -405,7 +408,7 @@ export default {
         to: this.$moment(new Date()).format("YYYY-MM-DD"),
         pagination: {
           pageSize: 20, //每页多少条
-          //   pageNumber: 1, 
+          //   pageNumber: 1,
           currentPage: 0 //当前多少页
         },
         page: 1, //订单执行的分页
@@ -415,7 +418,8 @@ export default {
         //扫码明细分页
         page: 0,
         currentPage: 1
-      }
+      },
+      isUp: false //是否展开库存信息
     };
   },
   created() {
@@ -431,15 +435,6 @@ export default {
       code: "00715FY41",
       data: {}
     };
-
-    let params43 = {
-      code: "00715FY43",
-      data: {
-        distributerId: this.distributerId,
-        from: this.paramsData.from,
-        to: this.paramsData.to
-      }
-    };
     let params36 = {
       code: "00715FY36",
       data: {
@@ -453,9 +448,9 @@ export default {
         type: 1
       }
     };
+    this.$ddapi.showLoading("加载中");
     this.getDetail(params36); //计划执行
-    this.getDetail(params41); //产品分类列表
-    this.getDetail(params43); //出入库量
+    this.getDetail(params41); //产品分类列表成功后查询出入库等信息
     // this.getDetail(params45);//品类列表
   },
   mounted() {
@@ -478,14 +473,6 @@ export default {
       //实时库存说明
       this.$toast("此库存量为实时库存量");
     },
-    outLink() {
-      this.$router.push({
-        path: "/outDetail",
-        query: {
-          distributorId: this.distributorId
-        }
-      });
-    },
     reset() {
       //重置
       this.paramsData.from = "2019-11-26";
@@ -495,6 +482,7 @@ export default {
     },
     screenSearch() {
       //筛选查询
+      this.$ddapi.showLoading("加载中");
       console.log(this.paramsData, "筛选");
       this.paramsData.begdate = this.$moment(this.paramsData.from).format(
         "YYYYMMDD"
@@ -506,18 +494,19 @@ export default {
         code: this.code,
         data: this.paramsData
       };
-
       this.getDetail(params);
-      let params43 = {
-        code: "00715FY43",
+      let params47 = {
+        //博智出入库等信息
+        code: "00715FY47",
         data: {
-          distributerId: this.distributerId,
-          from: this.paramsData.from,
-          to: this.paramsData.to
+          orderDistributorId: this.distributerId,
+          productId: this.paramsData.productId,
+          startTime: this.paramsData.from+' 00:00:00',
+          endTime: this.paramsData.to+' 23:59:59'
         }
       };
+      this.getDetail(params47); //库存等信息
       this.showOverlay = false;
-      this.getDetail(params43);
     },
     formatDate(date) {
       return this.$moment(date).format("YYYY-MM-DD");
@@ -577,7 +566,7 @@ export default {
     onConfirmProduct(value, index) {
       //确定产品
       this.showProduct = false;
-        // this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
+      // this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
       this.paramsData.productId = this.columnsProduct[index].id;
       this.paramsData.productName = this.columnsProduct[index].name;
       this.showDate = false;
@@ -614,6 +603,7 @@ export default {
     tabsClick(value) {
       //卡片切换
       this.loading = false; //才可触发onLoad
+      this.$ddapi.showLoading("加载中");
       this.detailPage.currentPage = 1;
       this.detailPage.page = 0;
       this.paramsData.page = 1; //1开始35接口用的page
@@ -659,12 +649,12 @@ export default {
           data: this.paramsData
         };
         if (this.productLoading) {
-          this.$toast("正在获取产品列表，请稍等...")
-          return
+          this.$toast("正在获取产品列表，请稍等...");
+          return;
         }
-        if (this.columnsProduct.length<=0) {
-          this.$toast("产品列表获取失败，请刷新页面或重新进入页面")
-          return
+        if (this.columnsProduct.length <= 0) {
+          this.$toast("产品列表获取失败，请刷新页面或重新进入页面");
+          return;
         }
         if (this.PlaceList.length > 0) {
           return;
@@ -679,12 +669,12 @@ export default {
           data: this.paramsData
         };
         if (this.productLoading) {
-          this.$toast("正在获取产品列表，请稍等...")
-          return
+          this.$toast("正在获取产品列表，请稍等...");
+          return;
         }
-        if (this.columnsProduct.length<=0) {
-          this.$toast("产品列表获取失败，请刷新页面或重新进入页面...")
-          return
+        if (this.columnsProduct.length <= 0) {
+          this.$toast("产品列表获取失败，请刷新页面或重新进入页面...");
+          return;
         }
         if (this.downstreamList.length > 0) {
           return;
@@ -694,10 +684,10 @@ export default {
     },
     getDetail(params) {
       // this.loading = true
-      if (params.code == '00715FY41') { //判断产品列表是否请求回来
-        this.productLoading = true
+      if (params.code == "00715FY41") {
+        //判断产品列表是否请求回来
+        this.productLoading = true;
       }
-      this.$ddapi.showLoading("加载中");
       this.$Axios
         .post("/api/ddadapter/openApi/data/", params)
         .then(res => {
@@ -718,6 +708,8 @@ export default {
         });
     },
     resetDefault(res, code) {
+      console.log(res,'error');
+      
       if (code == "00715FY36") {
         if (!res.result) {
           this.tableData = [];
@@ -736,12 +728,6 @@ export default {
       }
       if (code == "00715FY38") {
         //出库明细扫码明细
-        // if (!res.result.detail) {
-        //   this.PlaceList = [];
-        // }
-        // if (res.result.detail.length == 0) {
-        //   this.$toast("暂无明细");
-        // }
       }
       if (code == "00715FY39") {
         //下游明细
@@ -755,14 +741,15 @@ export default {
       }
       if (code == "00715FY41") {
         //产品选择列表
-        this.productLoading = false
-        this.$toast("产品列表请求失败，请刷新页面或重新进入页面")
+        this.productLoading = false;
+        this.$toast("产品列表请求失败，请刷新页面或重新进入页面");
       }
       if (code == "00715FY42") {
-        
       }
-      if (code == "00715FY43") {
+      if (code == "00715FY47") {
         //出入库量
+        this.$toast(res.errorMsg);
+
       }
     },
 
@@ -856,7 +843,7 @@ export default {
         } else {
           this.downstreamList = res.result.detail;
         }
-      
+
         // 数据全部加载完成
         if (
           this.downstreamList.length >=
@@ -883,7 +870,7 @@ export default {
         ]);
       }
       if (code == "00715FY41") {
-        this.productLoading = false
+        this.productLoading = false;
         //产品选择列表
         res.result.map(item => {
           item.text = item.name;
@@ -894,30 +881,32 @@ export default {
         this.paramsData.productName = this.columnsProduct[0].text;
         this.paramsData.productId = this.columnsProduct[0].id;
         console.log(this.columnsProduct);
-        let params42 = {
-          code: "00715FY42",
+        let params47 = {
+          //博智出入库等信息
+          code: "00715FY47",
           data: {
-            distributerId:this.distributerId,
-            productId:this.columnsProduct[0].id
+            orderDistributorId: this.distributerId,
+            productId: this.paramsData.productId,
+            startTime: this.paramsData.from+' 00:00:00',
+            endTime: this.paramsData.to+' 23:59:59'
           }
         };
-        this.getDetail(params42); //库存量
+        this.getDetail(params47); //库存等信息
       }
-      if (code == "00715FY42") {
-        this.storageRecord.inventory = String(res.result);
-      }
-      if (code == "00715FY43") {
+      // if (code == "00715FY42") {
+      //   this.storageRecord.inventory = String(res.result);
+      // }
+      if (code == "00715FY47") {
         //出入库量
-        this.storageRecord.storageIn = res.result.in;
-        this.storageRecord.storageOut = res.result.out;
-        this.storageRecord.customerScan = res.result.customerScan;
+        this.storageRecord = res.result;
       }
-      if (code == "00715FY45") { //品类
+      if (code == "00715FY45") {
+        //品类
         res.result.map(item => {
           item.text = item.name;
           return item;
         });
-        this.columnsCategory = res.result
+        this.columnsCategory = res.result;
       }
     },
     unfoldDetail(slot, isUnfold) {
@@ -1037,20 +1026,33 @@ export default {
 .detailTop {
   background-color: #ffffff;
   text-align: left;
-  padding: 16px 25px;
-  margin-bottom: 8px;
-  height: 103px;
+  padding: 16px 25px 0 25px;
+  // margin-bottom: 8px;
+  height: 124px;
+  overflow: hidden;
   .comp {
     padding-bottom: 15px;
     line-height: 15px;
   }
 }
-
-.storageRecord {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+.topUp{
+  margin-bottom: 8px;
+  background: #ffffff;
   text-align: center;
+  padding: 14px;
+}
+.storageRecord {
+  // display: flex;
+  // justify-content: space-around;
+  // align-items: center;
+  // text-align: center;
+  .cell {
+    width: 33.3333333%;
+    height: 53px;
+    display: inline-block;
+    text-align: center;
+    line-height: 20px;
+  }
 }
 
 .van-tabs__content {
@@ -1063,11 +1065,11 @@ export default {
 }
 
 .van-tabs {
-  height: calc(100% - 5px);
+  height: calc(100% - 26px);
 
   .panelContent {
     .none_dataImg {
-      height: calc(100% - 24px);
+      height: calc(100% - 24px) ;
       background-color: #ffffff;
       margin-top: 8px;
     }

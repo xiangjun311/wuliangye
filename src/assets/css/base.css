@@ -83,6 +83,9 @@ body{
     align-items: center;
     justify-content: center;
 }
+.fontSize_10{
+    font-size: 10px;
+}
 .fontSize_13{
     font-size: 13px;
 }
