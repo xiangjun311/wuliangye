@@ -90,9 +90,9 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').th
 console.log(process.env);
 
 if (process.env.NODE_ENV === 'development') {
-	console.log('本地环境');
+	console.log('本地环境',new Date().getTime());
 }else if (process.env.NODE_ENV === 'test'){
-	console.log("测试环境");
+	console.log("测试环境",new Date().getTime());
 }else{
-	console.log("正式环境");
+	console.log("正式环境",new Date().getTime());
 }

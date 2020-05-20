@@ -51,12 +51,12 @@
             <van-icon name="arrow-down" />
           </div>
         </div>
-        <div class="panelContent">
+        <div class="panelContent" style="height: calc(100% - 52px)">
           <Table :tableHead="tableHead" :data="tableData"></Table>
           <div
             class="none_dataImg flex_column_center"
             v-if="!tableData.length"
-            style="height: calc(100% - 68px);margin:0"
+            style="height: calc(100% - 44px);margin:0"
           >
             <img style="width:188px;height:100px" src="../../assets/img/none_data@2x.png" alt />
             <span style="color:#b2b2b2;font-size:15px;line-height:31px;">暂无报表~</span>
@@ -376,9 +376,21 @@ export default {
         { lable: "计划量", prop: "planquantity", width: 80 },
         { lable: "执行量", prop: "execquantity", width: 80 }
       ],
-      tableData: [
-        // { id: 1, planquantity: "200", monat: 1, execquantity: "454" },
-        // { id: 2, planquantity: "600", monat: 2, execquantity: "6456" }
+      tableData:[],
+      tableData1: [
+        { monat: 1, planquantity: "200", id: 1, execquantity: "454" },
+        { monat: 2, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 4, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 5, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 3, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 6, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 7, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 8, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 9, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 10, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 11, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: 12, planquantity: "600", id: 2, execquantity: "6456" },
+        { monat: '合计', planquantity: "600", id: 2, execquantity: "6456" }
       ],
       OrderFulfillment: [], //订单执行
       loading: false,
