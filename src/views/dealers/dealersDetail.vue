@@ -56,7 +56,7 @@
           <div
             class="none_dataImg flex_column_center"
             v-if="!tableData.length"
-            style="height: calc(100% - 44px);margin:0"
+            style="height: calc(100% - 68px);margin:0"
           >
             <img style="width:188px;height:100px" src="../../assets/img/none_data@2x.png" alt />
             <span style="color:#b2b2b2;font-size:15px;line-height:31px;">暂无报表~</span>
@@ -603,7 +603,7 @@ export default {
     tabsClick(value) {
       //卡片切换
       this.loading = false; //才可触发onLoad
-      this.$ddapi.showLoading("加载中");
+     
       this.detailPage.currentPage = 1;
       this.detailPage.page = 0;
       this.paramsData.page = 1; //1开始35接口用的page
@@ -680,6 +680,7 @@ export default {
           return;
         }
       }
+      this.$ddapi.showLoading("加载中");
       this.getDetail(this.params);
     },
     getDetail(params) {
