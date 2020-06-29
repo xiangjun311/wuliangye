@@ -298,6 +298,7 @@
           :columns="columnsProduct"
           @cancel="showProduct=false"
           @confirm="onConfirmProduct"
+          :default-index="defaultIndex" 
         />
       </div>
     </van-action-sheet>
@@ -341,6 +342,7 @@ export default {
         // { text: "品类0", id: "0" },
       ],
       columnsProduct: [],
+      defaultIndex:null,//默认选中产品的下标
       columnsOrder: [],
       columnsOrderType: [
         //写死数据
@@ -377,21 +379,6 @@ export default {
         { lable: "执行量", prop: "execquantity", width: 80 }
       ],
       tableData:[],
-      tableData1: [
-        { monat: 1, planquantity: "200", id: 1, execquantity: "454" },
-        { monat: 2, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 4, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 5, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 3, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 6, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 7, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 8, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 9, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 10, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 11, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: 12, planquantity: "600", id: 2, execquantity: "6456" },
-        { monat: '合计', planquantity: "600", id: 2, execquantity: "6456" }
-      ],
       OrderFulfillment: [], //订单执行
       loading: false,
       refreshing: false,
@@ -489,8 +476,9 @@ export default {
       //重置
       this.paramsData.from = "2019-11-26";
       this.paramsData.to = this.$moment(new Date()).format("YYYY-MM-DD");
-      this.paramsData.productId = this.columnsProduct[0].id;
-      this.paramsData.productName = this.columnsProduct[0].name;
+      this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
+      this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].name;
+      this.defaultIndex = this.columnsProduct.length-1
     },
     screenSearch() {
       //筛选查询
@@ -581,6 +569,7 @@ export default {
       // this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
       this.paramsData.productId = this.columnsProduct[index].id;
       this.paramsData.productName = this.columnsProduct[index].name;
+      this.defaultIndex = index
       this.showDate = false;
 
       // let params = {
@@ -891,8 +880,9 @@ export default {
         });
         this.columnsProduct = res.result;
 
-        this.paramsData.productName = this.columnsProduct[0].text;
-        this.paramsData.productId = this.columnsProduct[0].id;
+        this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].text;
+        this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
+        this.defaultIndex = this.columnsProduct.length-1
         console.log(this.columnsProduct);
         let params47 = {
           //博智出入库等信息
