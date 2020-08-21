@@ -476,9 +476,16 @@ export default {
       //重置
       this.paramsData.from = "2019-11-26";
       this.paramsData.to = this.$moment(new Date()).format("YYYY-MM-DD");
-      this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
-      this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].name;
-      this.defaultIndex = this.columnsProduct.length-1
+      // 4000000789 默认这个产品
+      this.columnsProduct.map((item,index)=>{
+        if (item.id=="4000000789") {
+          this.paramsData.productId = this.columnsProduct[index].id;
+          this.paramsData.productName = this.columnsProduct[index].name;
+          this.defaultIndex = index
+        }
+      })
+      // this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
+      // this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].name;
     },
     screenSearch() {
       //筛选查询
@@ -880,9 +887,16 @@ export default {
         });
         this.columnsProduct = res.result;
 
-        this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].text;
-        this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
-        this.defaultIndex = this.columnsProduct.length-1
+        // this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].text;
+        // this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
+        this.columnsProduct.map((item,index)=>{
+        if (item.id=="4000000789") {
+          this.paramsData.productId = this.columnsProduct[index].id;
+          this.paramsData.productName = this.columnsProduct[index].name;
+          this.defaultIndex = index
+        }
+        
+      })
         console.log(this.columnsProduct);
         let params47 = {
           //博智出入库等信息

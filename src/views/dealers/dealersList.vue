@@ -63,15 +63,7 @@ export default {
   created() {
     this.$ddapi.setTitle("经销商列表");
     this.$ddapi.navigationSetRight("", false, false);
-    // if (process.env.NODE_ENV === 'development') { //||sessionStorage.getItem("username")=="向俊"
-    //   console.log('本地测试');
-    //   // this.params.data.phone = "13608293629"
-    //   // this.params.data.name = "刘力"
-    // }else{
-    //   console.log("正式环境");
-    //   this.params.data.phone = sessionStorage.getItem("userphone").slice(4);
-    //   this.params.data.name = sessionStorage.getItem("username");
-    // }
+    
     this.phone = sessionStorage.getItem("userphone")
      if (!this.phone) {
       this.$toast('没有获取到电话号码，请联系后台处理！')
@@ -80,6 +72,12 @@ export default {
     let plm = this.phone.substring(this.phone.length-11,this.phone.length)
     this.params.data.phone = plm;
     this.params.data.name = sessionStorage.getItem("username");
+
+    // if (process.env.NODE_ENV === 'development') { //||sessionStorage.getItem("username")=="向俊"
+    //   console.log('本地测试'); 
+    //   this.params.data.phone = "17780650859" //17808319430
+    //   this.params.data.name = "熊良才"
+    // }
   },
   methods: {
     getList() {

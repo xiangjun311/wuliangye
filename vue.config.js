@@ -1,9 +1,4 @@
 const path = require("path");
-// const myIP = require('my-ip');
-
-// const proxy_debug = require('./proxy_prod')
-// const proxy_dev = require('./proxy_dev')
-// const proxy = process.env.NODE_ENV === 'development' ? proxy_dev : proxy_prod
 
 function resolve(dir) {
   return path.join(__dirname, dir);
@@ -24,7 +19,6 @@ function createProxy(params) {
   return result;
 }
 
-const Timestamp = new Date().getTime()
 module.exports = {
   lintOnSave:false,
   // publicPath: process.env.NODE_ENV === 'development' ? './' : '/treport/mob/',
@@ -41,11 +35,11 @@ module.exports = {
       errors: true
     },
     disableHostCheck: true,
-    // proxy: createProxy(proxy)
     proxy: {
       '/': {
-        target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
+        // target: 'http://218.89.67.51:85/', // 外网http://218.89.67.51:85/
         // target: 'http://10.0.134.94:85/', // 内网10.0.134.94:85
+        target:'https://yingxiao.wuliangye.com.cn:8082/',//正式环境
         // target: process.env.NODE_ENV === 'development' ? 'http://10.0.134.94:85/':'http://218.89.67.51:85/',
         changeOrigin: true,
         pathRewrite: {
@@ -53,8 +47,6 @@ module.exports = {
         }
       }
     }
-    // public: '192.168.0.132:8080'  // 本地ip
-   
   },
 
   configureWebpack:(config)=> {

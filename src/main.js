@@ -19,6 +19,20 @@ Vue.prototype.$ddapi = ddapi;
 
 Vue.use(Vant, Toast);
 
+import Vconsole from 'vconsole'
+
+
+if (process.env.NODE_ENV === 'development') {
+	console.log('本地环境',new Date().getTime());
+}else if (process.env.NODE_ENV === 'test'){
+	console.log("测试环境",new Date().getTime());
+}else{
+	console.log("正式环境",new Date().getTime());
+}
+if (process.env.NODE_ENV !== 'production') {
+	const vConsole = new Vconsole()
+	Vue.use(vConsole)
+}
 Vue.config.productionTip = false;
 
 // // 引入钉钉
@@ -46,34 +60,32 @@ Vue.prototype.$uniqueArray = function(array, key){ //JSON去重
   }
 
 // 鉴权免登调试
-
+sessionStorage.clear()
 ///*********************** */
 // /api/ddadapter/dingding/tZero/getJsTicketMob
 // /api/ddadapter/dingding/tZero/getJsTicketPc
 console.log(process.env.NODE_ENV);
 const devID = 'ding7da0a93f20669022ee0f45d8e4f7c288'
 const proID = 'ding5da63018b1631f1b35c2f4657eb6378f'
- const corpId = process.env.NODE_ENV === 'development' ? devID : proID
+ const corpId = process.env.NODE_ENV !== 'production' ? devID : proID
 dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').then(res => {
 	console.log("进入免登")
 	// Toast("进入免登")
 	console.log(res)
-	// sessionStorage.setItem("warinfo", JSON.stringify(res.warinfo));//战区
-	// sessionStorage.setItem("baseinfo", JSON.stringify(res.baseinfo));//基地
-	// sessionStorage.setItem("userid", res.userid);//当前登录人id
+	// console.log(code,75)
+	sessionStorage.setItem("code",res.code)
 	sessionStorage.setItem("userphone", res.userMobile);//当前登录人电话
 	sessionStorage.setItem("username", res.username);//当前登录人
-	// sessionStorage.setItem("roleid", res.roleid);
-// console.log(App,Error);
 	new Vue({
 		router,
 		store,
 		render: h => h(App)
 	}).$mount("#app");
-	if (res.errcode == 0) {
+	if (res.errcode == '0') {
 		router.replace({
             path: '/dealersList'
-        })
+		})
+		
 	} else {
 		console.log(res);
 	
@@ -87,12 +99,3 @@ dingTalkM.authLogin(corpId, '/api/ddadapter/dingding/timeReport/getUserCode').th
 	location.href  = '#/error?type=getCodeErr'
 	console.log(err)
 })
-console.log(process.env);
-
-if (process.env.NODE_ENV === 'development') {
-	console.log('本地环境',new Date().getTime());
-}else if (process.env.NODE_ENV === 'test'){
-	console.log("测试环境",new Date().getTime());
-}else{
-	console.log("正式环境",new Date().getTime());
-}

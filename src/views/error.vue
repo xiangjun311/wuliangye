@@ -19,7 +19,8 @@ export default {
     created(){
         this.$ddapi.setTitle(" ");
         let hash = window.location.hash
-        console.log(hash.indexOf('type'));
+        console.log(sessionStorage.getItem("code"),22);
+        let code = sessionStorage.getItem("code")
         if (hash.indexOf('type')!=-1) {
             console.log(hash.substring(hash.indexOf('type')+5));
             this.type = hash.substring(hash.indexOf('type')+5)
@@ -27,7 +28,7 @@ export default {
                 this.message = '页面找不到了~'
             }else if (this.type == 'getCodeErr') {
                 this.message = '免登失败~'
-                this.code = '123456'
+                this.code = code||'123456'
             }
         }else{
             console.log('么有type');
