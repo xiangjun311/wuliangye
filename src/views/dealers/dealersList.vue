@@ -76,7 +76,7 @@ export default {
     // if (process.env.NODE_ENV === 'development') { //||sessionStorage.getItem("username")=="向俊"
     //   console.log('本地测试'); 
     //   this.params.data.phone = "17780650859" //17808319430
-    //   this.params.data.name = "熊良才"
+    //   this.params.data.name = "韩明军"
     // }
   },
   methods: {

@@ -30,12 +30,21 @@
             实时库存量
             <van-icon name="info" size="10" @click="infoClick" />
           </div>
-        </div> -->
+        </div>-->
       </div>
     </div>
-    <div class="topUp color_9 fontSize_10" @click="isUp=!isUp"><van-icon :name="isUp?'arrow-up':'arrow-down'" />{{!isUp?'展开':'收起'}}</div>
+    <div class="topUp color_9 fontSize_10" @click="isUp=!isUp">
+      <van-icon :name="isUp?'arrow-up':'arrow-down'" />
+      {{!isUp?'展开':'收起'}}
+    </div>
 
-    <van-tabs v-model="active" animated color="#F13D3D" @click="tabsClick" :style="{height:!isUp?'calc(100% - 26px)':'calc(100% - 83px)'}">
+    <van-tabs
+      v-model="active"
+      animated
+      color="#F13D3D"
+      @click="tabsClick"
+      :style="{height:!isUp?'calc(100% - 26px)':'calc(100% - 83px)'}"
+    >
       <van-tab title="计划执行">
         <div class="panelBtn" style="background: #ffffff;margin:0 0 8px 0;padding:0">
           <div
@@ -287,6 +296,7 @@
           :columns="columnsCategory"
           @cancel="showCategory=false"
           @confirm="onConfirmCategory"
+          :default-index="defaultIndexCategory"
         />
       </div>
     </van-action-sheet>
@@ -298,7 +308,7 @@
           :columns="columnsProduct"
           @cancel="showProduct=false"
           @confirm="onConfirmProduct"
-          :default-index="defaultIndex" 
+          :default-index="defaultIndex"
         />
       </div>
     </van-action-sheet>
@@ -342,7 +352,8 @@ export default {
         // { text: "品类0", id: "0" },
       ],
       columnsProduct: [],
-      defaultIndex:null,//默认选中产品的下标
+      defaultIndex: null, //默认选中产品的下标
+      defaultIndexCategory:null,//默认选中品类的下标
       columnsOrder: [],
       columnsOrderType: [
         //写死数据
@@ -363,10 +374,10 @@ export default {
       maxDate: new Date(),
       currentDate: new Date(),
       storageRecord: {
-        inventoryDifferenceNum: "--",//差异
+        inventoryDifferenceNum: "--", //差异
         inboundNum: "--",
         outboundNum: "--",
-        startingInventoryNum:"--", //期初
+        startingInventoryNum: "--", //期初
         endingInventoryNum: "--" //期末
       },
       active: 0, //tabs
@@ -378,7 +389,7 @@ export default {
         { lable: "计划量", prop: "planquantity", width: 80 },
         { lable: "执行量", prop: "execquantity", width: 80 }
       ],
-      tableData:[],
+      tableData: [],
       OrderFulfillment: [], //订单执行
       loading: false,
       refreshing: false,
@@ -438,7 +449,8 @@ export default {
       code: "00715FY36",
       data: {
         distributerid: this.distributerId,
-        year: this.currentYear
+        year: this.currentYear,
+        classificationid: this.categoryId
       }
     };
     let params45 = {
@@ -448,9 +460,9 @@ export default {
       }
     };
     this.$ddapi.showLoading("加载中");
-    this.getDetail(params36); //计划执行
+    // this.getDetail(params36); //计划执行
     this.getDetail(params41); //产品分类列表成功后查询出入库等信息
-    // this.getDetail(params45);//品类列表
+    this.getDetail(params45); //默认品类，则需要品类列表查询成功以后查询计划执行，
   },
   mounted() {
     let that = this;
@@ -477,13 +489,13 @@ export default {
       this.paramsData.from = "2019-11-26";
       this.paramsData.to = this.$moment(new Date()).format("YYYY-MM-DD");
       // 4000000789 默认这个产品
-      this.columnsProduct.map((item,index)=>{
-        if (item.id=="4000000789") {
+      this.columnsProduct.map((item, index) => {
+        if (item.id == "4000000789") {
           this.paramsData.productId = this.columnsProduct[index].id;
           this.paramsData.productName = this.columnsProduct[index].name;
-          this.defaultIndex = index
+          this.defaultIndex = index;
         }
-      })
+      });
       // this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
       // this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].name;
     },
@@ -508,8 +520,8 @@ export default {
         data: {
           orderDistributorId: this.distributerId,
           productId: this.paramsData.productId,
-          startTime: this.paramsData.from+' 00:00:00',
-          endTime: this.paramsData.to+' 23:59:59'
+          startTime: this.paramsData.from + " 00:00:00",
+          endTime: this.paramsData.to + " 23:59:59"
         }
       };
       this.getDetail(params47); //库存等信息
@@ -536,8 +548,8 @@ export default {
     },
     categoryClick() {
       //选择品类
-      this.$toast("暂未开放");
-      return;
+      // this.$toast("暂未开放");
+      // return;
       this.showCategory = true;
     },
     onConfirmYear(value, index) {
@@ -550,7 +562,7 @@ export default {
         data: {
           distributerid: this.distributerId,
           year: value,
-          category: this.categoryId //品类
+          classificationid: this.categoryId //品类
         }
       };
       this.getDetail(params36);
@@ -565,7 +577,7 @@ export default {
         data: {
           distributerid: this.distributerId,
           year: this.currentYear,
-          category: this.categoryId //品类
+          classificationid: this.categoryId //品类
         }
       };
       this.getDetail(params36);
@@ -576,7 +588,7 @@ export default {
       // this.$toast(`当前值Pr：${value}, 当前索引：${index}`);
       this.paramsData.productId = this.columnsProduct[index].id;
       this.paramsData.productName = this.columnsProduct[index].name;
-      this.defaultIndex = index
+      this.defaultIndex = index;
       this.showDate = false;
 
       // let params = {
@@ -611,7 +623,7 @@ export default {
     tabsClick(value) {
       //卡片切换
       this.loading = false; //才可触发onLoad
-     
+
       this.detailPage.currentPage = 1;
       this.detailPage.page = 0;
       this.paramsData.page = 1; //1开始35接口用的page
@@ -692,7 +704,8 @@ export default {
       this.getDetail(this.params);
     },
     getDetail(params) {
-      // this.loading = true
+      this.$ddapi.showLoading("加载中");
+
       if (params.code == "00715FY41") {
         //判断产品列表是否请求回来
         this.productLoading = true;
@@ -717,11 +730,12 @@ export default {
         });
     },
     resetDefault(res, code) {
-      console.log(res,'error');
-      
+      console.log(res, "error");
+
       if (code == "00715FY36") {
         if (!res.result) {
           this.tableData = [];
+          this.$toast(res.errorMsg)
         }
       }
       if (code == "00715FY35") {
@@ -758,7 +772,6 @@ export default {
       if (code == "00715FY47") {
         //出入库量
         this.$toast(res.errorMsg);
-
       }
     },
 
@@ -889,14 +902,13 @@ export default {
 
         // this.paramsData.productName = this.columnsProduct[this.columnsProduct.length-1].text;
         // this.paramsData.productId = this.columnsProduct[this.columnsProduct.length-1].id;
-        this.columnsProduct.map((item,index)=>{
-        if (item.id=="4000000789") {
-          this.paramsData.productId = this.columnsProduct[index].id;
-          this.paramsData.productName = this.columnsProduct[index].name;
-          this.defaultIndex = index
-        }
-        
-      })
+        this.columnsProduct.map((item, index) => {
+          if (item.id == "4000000789") {
+            this.paramsData.productId = this.columnsProduct[index].id;
+            this.paramsData.productName = this.columnsProduct[index].name;
+            this.defaultIndex = index;
+          }
+        });
         console.log(this.columnsProduct);
         let params47 = {
           //博智出入库等信息
@@ -904,8 +916,8 @@ export default {
           data: {
             orderDistributorId: this.distributerId,
             productId: this.paramsData.productId,
-            startTime: this.paramsData.from+' 00:00:00',
-            endTime: this.paramsData.to+' 23:59:59'
+            startTime: this.paramsData.from + " 00:00:00",
+            endTime: this.paramsData.to + " 23:59:59"
           }
         };
         this.getDetail(params47); //库存等信息
@@ -924,6 +936,22 @@ export default {
           return item;
         });
         this.columnsCategory = res.result;
+        this.columnsCategory.map((item, index) => {
+          if (item.id == "0122") {
+            this.defaultIndexCategory = index;
+            this.categoryId = item.id
+            this.category = item.text
+          }
+        });
+        let params36 = {
+          code: "00715FY36",
+          data: {
+            distributerid: this.distributerId,
+            year: this.currentYear,
+            classificationid: this.categoryId
+          }
+        };
+        this.getDetail(params36)
       }
     },
     unfoldDetail(slot, isUnfold) {
@@ -1052,7 +1080,7 @@ export default {
     line-height: 15px;
   }
 }
-.topUp{
+.topUp {
   margin-bottom: 8px;
   background: #ffffff;
   text-align: center;
@@ -1086,7 +1114,7 @@ export default {
 
   .panelContent {
     .none_dataImg {
-      height: calc(100% - 24px) ;
+      height: calc(100% - 24px);
       background-color: #ffffff;
       margin-top: 8px;
     }
